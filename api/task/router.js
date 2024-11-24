@@ -1,4 +1,3 @@
-// build your `/api/tasks` router here
 const router = require('express').Router()
 
 router.use('*', (req, res) => {
