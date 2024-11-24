@@ -5,16 +5,50 @@
 exports.up = async function(knex) {
   await knex.schema
     .createTable('projects', table => {
-        table.increments()
+        table.increments('project_id');
+        table.text('project_name', 128)
+            .notNullable();
+        table.text('project_description');
+        table.boolean('project_complete')
+            .defaultTo(false);
     })
     .createTable('resources', table => {
-        table.increments()
+        table.increments('resource_id');
+        table.text('resource_name', 128)
+            .notNullable()
+            .unique();
+        table.text('resource_description');
     })
     .createTable('tasks', table => {
-        table.increments()
+        table.increments('task_id');
+        table.text('task_description')
+            .notNullable();
+        table.text('task_notes');
+        table.boolean('task_completed').defaultTo(false);
+        table.integer('project_id')
+            .unsigned()
+            .notNullable()
+            .references('project_id')
+            .inTable('projects')
+            .onUpdate('CASCADE')
+            .onDelete('CASCADE');
     })
     .createTable('project_resources', table => {
-        table.increments()
+        table.increments('pr_id');
+        table.integer('project_id')
+            .unsigned()
+            .notNullable()
+            .references('project_id')
+            .inTable('projects')
+            .onUpdate('CASCADE')
+            .onDelete('CASCADE');
+        table.integer('resource_id')
+            .unsigned()
+            .notNullable()
+            .references('resource_id')
+            .inTable('resources')
+            .onUpdate('CASCADE')
+            .onDelete('CASCADE');
     })
 };
 
