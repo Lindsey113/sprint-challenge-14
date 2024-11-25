@@ -9,6 +9,14 @@ router.get('/:project_id', (req, res, next) => {
         .catch(next)
 })
 
+router.get('/api/projects', (req, res, next) => {
+    Project.getAllProjects()
+        .then(proj => {
+            res.status(200).json(proj)
+        })
+        .catch(next)
+})
+
 router.use((err, req, res, next) => { //eslint-disable-line
     res.status(500).json({
         customMessage: "something went wrong within the Projects router",
