@@ -1,21 +1,46 @@
 const router = require('express').Router()
 const Project = require('./model')
 
-router.get('/:project_id', (req, res, next) => {
-    Project.getProjectById(req.params.project_id)
-        .then(resource => {
-            res.status(200).json(resource)
-        })
-        .catch(next)
-})
 
-router.get('/api/projects', (req, res, next) => {
+router.get('/', (req, res, next) => {
     Project.getAllProjects()
         .then(proj => {
-            res.status(200).json(proj)
+            res.status(200).json(proj);
         })
-        .catch(next)
+        .catch(err => {
+            next(err);
+        });
 })
+
+router.post('/', async (req, res, next) => {
+    try {
+        const { project_name, project_description, project_completed } = req.body
+        if (!project_name) {
+            return res.status(400).json({
+                message: 'Project name required'
+            })
+        }
+
+        const newProj = await Project.insertNewProject({
+            project_name,
+            project_description,
+            project_completed
+        })
+
+        const result = {
+            ...newProj,
+            project_completed: !!newProj.project_completed,
+        }
+
+        res.status(201).json(result)
+
+
+    } catch (err) {
+        next(err)
+    }
+})
+
+
 
 router.use((err, req, res, next) => { //eslint-disable-line
     res.status(500).json({
