@@ -1,5 +1,5 @@
 const router = require('express').Router()
-const Resource = require('./model')
+const Resource = require('../resource/model')
 
 
 router.get('/', (req, res, next) => {
@@ -15,7 +15,7 @@ router.get('/', (req, res, next) => {
 
 router.post('/', async (req, res, next) => {
     try {
-        
+
         const { resource_name, resource_description } = req.body
 
         if (!resource_name) {
