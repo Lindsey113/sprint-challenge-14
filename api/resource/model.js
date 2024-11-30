@@ -1,46 +1,18 @@
 const db = require('../../data/dbConfig')
 
 async function getAllResources() {
-    return db("resources").then((resources) =>
-        resources.map((resource) => ({
-            ...resource,
-            resource_completed: !!resource.resource_completed,
-        }))
-    );
-}
-
-async function getResourceById(resource_id) {
-    const rows = await db('resources as p')
-        .where('resource_id', resource_id);
-
-    return rows
+    return db("resources")
 }
 
 async function insertNewResource(resource) {
-    try {
-        const { resource_name, resource_description } = resource
-        const resourceExists = await getResourceByName(resource_name)
+    const [resource_id] = await db('resources').insert(resource)
+    const newResource = await db('resources').where({ resource_id }).first();
 
-        if (resourceExists) {
-            return resourceExists
-        }
-
-        const newResource = {
-            resource_name,
-            resource_description
-        }
-
-        const [id] = await db('resources').insert(newResource, 'resource_id')
-        const resId = id.resource_id ? id.resource_id : id
-
-        return getResourceById(resId)
-    } catch (err) {
-        console.error(err)
-    }
+    return newResource
 }
 
-async function getResourceByName(resource_name) {
-    const res = await db('resources').where({ resource_name }).first();
+async function getResourceByName(resourceName) {
+    const res = await db('resources').where({ resource_name: resourceName }).first();
     return res
 }
 

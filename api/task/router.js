@@ -4,8 +4,7 @@ const { validateTask } = require('./middleware')
 
 router.post('/', validateTask, async (req, res, next) => {
     try {
-        const data = req.body
-        const newTask = await Task.insertNewTask(data)
+        const newTask = await Task.insertNewTask(req.body)
         res.status(201).json(newTask)
     } catch (err) {
         next(err)
@@ -15,11 +14,9 @@ router.post('/', validateTask, async (req, res, next) => {
 router.get("/", async (req, res) => {
     try {
         const tasks = await Task.getAllTasks()
-        res.json(tasks);
+        res.status(200).json(tasks);
     } catch (err) {
-        res
-            .status(500)
-            .json({ error: err.message });
+        res.status(500).json({ error: err.message });
     }
 });
 

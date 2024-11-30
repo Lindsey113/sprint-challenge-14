@@ -1,5 +1,6 @@
 const router = require('express').Router()
 const Resource = require('../resource/model')
+const { validateName } = require('./middleware')
 
 
 router.get('/', (req, res, next) => {
@@ -13,31 +14,10 @@ router.get('/', (req, res, next) => {
 })
 
 
-router.post('/', async (req, res, next) => {
+router.post('/', validateName, async (req, res, next) => {
+    const newData = await Resource.insertNewResource(req.body)
     try {
-
-        const { resource_name, resource_description } = req.body
-
-        if (!resource_name) {
-            return res.status(400).json({
-                message: 'resource name required'
-            })
-        }
-
-        const newRes = await Resource.insertNewResource({
-            resource_name,
-            resource_description
-        })
-
-        if (newRes.resource_name === req.body.resource_name) {
-            return res.status(400).json({
-                message: 'resource name must be unique'
-            })
-        }
-
-        const result = { ...newRes }
-
-        res.status(201).json(result)
+        res.status(201).json(newData)
     } catch (err) {
         next(err)
     }

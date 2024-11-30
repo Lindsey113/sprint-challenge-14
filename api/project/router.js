@@ -14,25 +14,14 @@ router.get('/', (req, res, next) => {
 
 router.post('/', async (req, res, next) => {
     try {
-        const { project_name, project_description, project_completed } = req.body
-        if (!project_name) {
+        const newProject = await Project.insertNewProject(req.body)
+        if (!newProject) {
             return res.status(400).json({
                 message: 'Project name required'
             })
         }
 
-        const newProj = await Project.insertNewProject({
-            project_name,
-            project_description,
-            project_completed
-        })
-
-        const result = {
-            ...newProj,
-            project_completed: !!newProj.project_completed,
-        }
-
-        res.status(201).json(result)
+        res.status(201).json(newProject)
 
 
     } catch (err) {

@@ -10,11 +10,6 @@ function validateTask(req, res, next) {
             message: "task_description is required"
         })
     }
-    if (typeof project_id !== 'number') {
-        return res.status(400).json({
-            message: "project_id must be a number"
-        })
-    }
     next()
 }
 
